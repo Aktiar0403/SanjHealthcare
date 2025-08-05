@@ -1,1 +1,0 @@
-// Firebase visit logging logic here
