@@ -72,146 +72,110 @@
     </nav>
     
     <div class="container">
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content active">
-            <div class="app-menu">
-                <div class="menu-item" data-tab="products">
-                    <div class="menu-icon">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="menu-title">Products</div>
-                    <div class="menu-desc">Manage products, pricing & categories</div>
-                </div>
-                <div class="menu-item" data-tab="distributors">
-                    <div class="menu-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="menu-title">Distributors</div>
-                    <div class="menu-desc">Stockists & Superstockists</div>
-                </div>
-                <div class="menu-item" data-tab="inventory">
-                    <div class="menu-icon">
-                        <i class="fas fa-boxes"></i>
-                    </div>
-                    <div class="menu-title">Inventory</div>
-                    <div class="menu-desc">Stock levels & management</div>
-                </div>
-                <div class="menu-item" data-tab="invoices">
-                    <div class="menu-icon">
-                        <i class="fas fa-file-invoice"></i>
-                    </div>
-                    <div class="menu-title">Invoices</div>
-                    <div class="menu-desc">Create & manage invoices</div>
-                </div>
-                <div class="menu-item" data-tab="sales">
-                    <div class="menu-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="menu-title">Sales Data</div>
-                    <div class="menu-desc">Primary & secondary sales</div>
-                </div>
-                <div class="menu-item" data-tab="expenses">
-                    <div class="menu-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="menu-title">Expenses</div>
-                    <div class="menu-desc">Marketing & operating costs</div>
-                </div>
-                <div class="menu-item" data-tab="debts">
-                    <div class="menu-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <div class="menu-title">Debts & Loans</div>
-                    <div class="menu-desc">Loan tracking & payments</div>
-                </div>
-                <div class="menu-item" data-tab="reports">
-                    <div class="menu-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <div class="menu-title">Reports</div>
-                    <div class="menu-desc">Analytics & insights</div>
-                </div>
-            </div>
-            
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-label">Total Products</div>
-                    <div class="stat-value" id="total-products">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Distributors</div>
-                    <div class="stat-value" id="total-distributors">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Monthly Sales</div>
-                    <div class="stat-value" id="month-sales">₹0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Expenses</div>
-                    <div class="stat-value" id="total-expenses">₹0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Loans</div>
-                    <div class="stat-value" id="active-loans">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Pending Payments</div>
-                    <div class="stat-value" id="pending-payments">₹0</div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-exclamation-triangle"></i> Alerts & Notifications
-                    </div>
-                </div>
-                <div id="alerts-container">
-                    <!-- Alerts will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-chart-bar"></i> Financial Overview
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="financialOverviewChart"></canvas>
-                </div>
-            </div>
-            <!-- Sales Trend -->
-<div class="card">
-    <div class="card-header"><h3>Sales Trend</h3></div>
-    <div class="chart-container">
-        <canvas id="salesTrendChart"></canvas>
+       <!-- Dashboard Tab -->
+<div id="dashboard" class="tab-content active">
+    <div class="app-menu">
+        <div class="menu-item" data-tab="products">
+            <div class="menu-icon"><i class="fas fa-pills"></i></div>
+            <div class="menu-title">Products</div>
+            <div class="menu-desc">Manage products, pricing & categories</div>
+        </div>
+        <div class="menu-item" data-tab="distributors">
+            <div class="menu-icon"><i class="fas fa-users"></i></div>
+            <div class="menu-title">Distributors</div>
+            <div class="menu-desc">Stockists & Superstockists</div>
+        </div>
+        <div class="menu-item" data-tab="inventory">
+            <div class="menu-icon"><i class="fas fa-boxes"></i></div>
+            <div class="menu-title">Inventory</div>
+            <div class="menu-desc">Stock levels & management</div>
+        </div>
+        <div class="menu-item" data-tab="invoices">
+            <div class="menu-icon"><i class="fas fa-file-invoice"></i></div>
+            <div class="menu-title">Invoices</div>
+            <div class="menu-desc">Create & manage invoices</div>
+        </div>
+        <div class="menu-item" data-tab="sales">
+            <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="menu-title">Sales Data</div>
+            <div class="menu-desc">Primary & secondary sales</div>
+        </div>
+        <div class="menu-item" data-tab="expenses">
+            <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="menu-title">Expenses</div>
+            <div class="menu-desc">Marketing & operating costs</div>
+        </div>
+        <div class="menu-item" data-tab="debts">
+            <div class="menu-icon"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="menu-title">Debts & Loans</div>
+            <div class="menu-desc">Loan tracking & payments</div>
+        </div>
+        <div class="menu-item" data-tab="reports">
+            <div class="menu-icon"><i class="fas fa-file-alt"></i></div>
+            <div class="menu-title">Reports</div>
+            <div class="menu-desc">Analytics & insights</div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+        <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-value" id="total-products">0</div></div>
+        <div class="stat-card"><div class="stat-label">Active Distributors</div><div class="stat-value" id="total-distributors">0</div></div>
+        <div class="stat-card"><div class="stat-label">Monthly Sales</div><div class="stat-value" id="month-sales">₹0</div></div>
+        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="total-expenses">₹0</div></div>
+        <div class="stat-card"><div class="stat-label">Active Loans</div><div class="stat-value" id="active-loans">0</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Payments</div><div class="stat-value" id="pending-payments">₹0</div></div>
+    </div>
+
+    <!-- Alerts & Notifications -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-exclamation-triangle"></i> Alerts & Notifications</div>
+        </div>
+        <div id="alerts-container"></div>
+    </div>
+
+    <!-- Financial Overview Chart -->
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-chart-bar"></i> Financial Overview</div></div>
+        <div class="chart-container">
+            <canvas id="financialOverviewChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Sales Trend Chart -->
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-chart-line"></i> Sales Trend</div></div>
+        <div class="chart-container">
+            <canvas id="salesTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Product Performance Chart -->
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-box"></i> Product Performance</div></div>
+        <div class="chart-container">
+            <canvas id="productPerformanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Expense Breakdown Chart -->
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-money-bill"></i> Expense Breakdown</div></div>
+        <div class="chart-container">
+            <canvas id="expenseBreakdownChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Inventory Status Chart -->
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-warehouse"></i> Inventory Status</div></div>
+        <div class="chart-container">
+            <canvas id="inventoryStatusChart"></canvas>
+        </div>
     </div>
 </div>
 
-<!-- Product Performance -->
-<div class="card">
-    <div class="card-header"><h3>Product Performance</h3></div>
-    <div class="chart-container">
-        <canvas id="productPerformanceChart"></canvas>
-    </div>
-</div>
-
-<!-- Expense Breakdown -->
-<div class="card">
-    <div class="card-header"><h3>Expense Breakdown</h3></div>
-    <div class="chart-container">
-        <canvas id="expenseBreakdownChart"></canvas>
-    </div>
-</div>
-
-<!-- Inventory Status -->
-<div class="card">
-    <div class="card-header"><h3>Inventory Status</h3></div>
-    <div class="chart-container">
-        <canvas id="inventoryStatusChart"></canvas>
-    </div>
-</div>
 
         </div>
         
