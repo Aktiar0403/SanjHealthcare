@@ -1,213 +1,316 @@
-class DashboardController {
-    constructor() {
-        this.productController = new ProductController();
-        this.distributorController = new DistributorController();
-        this.inventoryController = new InventoryController();
-        this.expenseController = new ExpenseController();
-        this.loanController = new LoanController();
-        this.charts = new Map();
-    }
+class ChartManager {
+    static charts = new Map();
 
-    init() {
-        this.updateDashboardStats();
-        this.renderAlerts();
-        this.initializeCharts();
-    }
-
-    updateDashboardStats() {
-        const products = this.productController.getAllProducts();
-        const stockists = this.distributorController.getAllStockists();
-        const superstockists = this.distributorController.getAllSuperstockists();
-        const expenseSummary = this.expenseController.getExpenseSummary('month');
-        const loanSummary = this.loanController.getLoanSummary();
-
-        // Update DOM elements
-        document.getElementById('total-products').textContent = products.length;
-        document.getElementById('total-distributors').textContent = stockists.length + superstockists.length;
-        document.getElementById('month-sales').textContent = this.getMonthlySales();
-        document.getElementById('total-expenses').textContent = Formatters.formatCurrency(expenseSummary.total.expenses);
-        document.getElementById('active-loans').textContent = loanSummary.total.loans;
-        document.getElementById('pending-payments').textContent = Formatters.formatCurrency(loanSummary.total.monthlyPayment);
-    }
-
-    getMonthlySales() {
-        // Mock sales data - in real app, this would come from sales records
-        const monthlySales = 656300;
-        return Formatters.formatCurrency(monthlySales);
-    }
-
-    renderAlerts() {
-        const container = document.getElementById('alerts-container');
-        container.innerHTML = '';
-
-        const alerts = this.getAlerts();
-        
-        if (alerts.length === 0) {
-            container.innerHTML = `
-                <div class="highlight" style="background-color: #e8f5e8; border-left-color: #28a745;">
-                    <i class="fas fa-check-circle"></i>
-                    All systems operational. No critical alerts.
-                </div>
-            `;
-            return;
+    /** 
+     * Safely get canvas context
+     */
+    static getContextSafe(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.warn(`ChartManager: Canvas with ID "${canvasId}" not found.`);
+            return null;
         }
-
-        alerts.forEach(alert => {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'highlight';
-            alertDiv.style.backgroundColor = alert.type === 'warning' ? '#fff3cd' : 
-                                           alert.type === 'danger' ? '#f8d7da' : '#e8f5e8';
-            alertDiv.style.borderLeftColor = alert.type === 'warning' ? '#ffc107' : 
-                                           alert.type === 'danger' ? '#dc3545' : '#28a745';
-            
-            alertDiv.innerHTML = `
-                <i class="fas fa-${alert.icon}"></i>
-                ${alert.message}
-                ${alert.action ? `<button class="btn btn-sm btn-primary" style="margin-left: 10px;" data-action="${alert.action}">${alert.actionText}</button>` : ''}
-            `;
-            container.appendChild(alertDiv);
-        });
+        return canvas.getContext('2d');
     }
 
-    getAlerts() {
-        const alerts = [];
-
-        // Low stock alerts
-        const lowStockProducts = this.productController.getLowStockProducts();
-        if (lowStockProducts.length > 0) {
-            alerts.push({
-                type: 'warning',
-                icon: 'exclamation-triangle',
-                message: `${lowStockProducts.length} products have low stock levels`,
-                action: 'view-products',
-                actionText: 'View Products'
-            });
-        }
-
-        // Upcoming payments
-        const upcomingPayments = this.loanController.getUpcomingPayments(7);
-        if (upcomingPayments.length > 0) {
-            alerts.push({
-                type: 'danger',
-                icon: 'clock',
-                message: `${upcomingPayments.length} loan payments due in next 7 days`,
-                action: 'view-loans',
-                actionText: 'View Loans'
-            });
-        }
-
-        // Expiring products
-        const expiringItems = this.inventoryController.getExpiringItems(30);
-        if (expiringItems.length > 0) {
-            alerts.push({
-                type: 'warning',
-                icon: 'calendar-times',
-                message: `${expiringItems.length} inventory items expiring in next 30 days`,
-                action: 'view-inventory',
-                actionText: 'View Inventory'
-            });
-        }
-
-        // Credit limit alerts
-        const distributors = [
-            ...this.distributorController.getAllStockists(),
-            ...this.distributorController.getAllSuperstockists()
-        ];
-        const criticalCredit = distributors.filter(d => d.creditStatus === 'critical');
-        if (criticalCredit.length > 0) {
-            alerts.push({
-                type: 'danger',
-                icon: 'credit-card',
-                message: `${criticalCredit.length} distributors have critical credit utilization`,
-                action: 'view-distributors',
-                actionText: 'View Distributors'
-            });
-        }
-
-        return alerts;
-    }
-
-    initializeCharts() {
-        this.createFinancialOverviewChart();
-        this.createSalesTrendChart();
-        this.createInventoryStatusChart();
-    }
-
-    createFinancialOverviewChart() {
-        const data = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            sales: [520000, 580000, 610000, 590000, 630000, 656300],
-            expenses: [120000, 110000, 125000, 130000, 115000, 125000]
-        };
-
-        ChartManager.createFinancialOverviewChart('financialOverviewChart', data);
-    }
-
-    createSalesTrendChart() {
-        const data = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            primary: [450000, 500000, 520000, 480000, 550000, 580000],
-            secondary: [400000, 450000, 480000, 440000, 500000, 520000]
-        };
-
-        ChartManager.createSalesTrendChart('salesTrendChart', data);
-    }
-
-    createInventoryStatusChart() {
-        const inventory = this.inventoryController.getAllInventory();
-        const lowStock = inventory.filter(item => item.stockStatus === 'low').length;
-        const mediumStock = inventory.filter(item => item.stockStatus === 'medium').length;
-        const goodStock = inventory.filter(item => item.stockStatus === 'good').length;
-
-        const data = [lowStock, mediumStock, goodStock];
-        ChartManager.createInventoryStatusChart('inventoryStatusChart', data);
-    }
-
-    getQuickStats() {
-        const products = this.productController.getAllProducts();
-        const stockists = this.distributorController.getAllStockists();
-        const superstockists = this.distributorController.getAllSuperstockists();
-        const inventorySummary = this.inventoryController.getStockSummary();
-        const expenseSummary = this.expenseController.getExpenseSummary('month');
-        const loanSummary = this.loanController.getLoanSummary();
-
-        return {
-            products: {
-                total: products.length,
-                lowStock: this.productController.getLowStockProducts().length
-            },
-            distributors: {
-                total: stockists.length + superstockists.length,
-                stockists: stockists.length,
-                superstockists: superstockists.length
-            },
-            inventory: {
-                totalValue: inventorySummary.totalValue,
-                lowStockItems: inventorySummary.lowStockCount
-            },
-            financial: {
-                monthlySales: 656300, // Mock data
-                monthlyExpenses: expenseSummary.total.expenses,
-                profit: 656300 - expenseSummary.total.expenses
-            },
-            loans: {
-                active: loanSummary.total.loans,
-                monthlyPayments: loanSummary.total.monthlyPayment
+    /** 
+     * Safely destroy existing chart
+     */
+    static destroyIfExists(canvasId) {
+        if (this.charts.has(canvasId)) {
+            try {
+                this.charts.get(canvasId).destroy();
+            } catch (e) {
+                console.warn(`ChartManager: Error destroying chart for "${canvasId}" →`, e);
             }
-        };
+            this.charts.delete(canvasId);
+        }
     }
 
-    refresh() {
-        this.updateDashboardStats();
-        this.renderAlerts();
-        
-        // Refresh charts if they exist
-        if (this.charts.size > 0) {
-            this.charts.forEach((chart, id) => {
-                if (chart && typeof chart.update === 'function') {
-                    chart.update();
+    /** 
+     * Create Financial Overview Chart
+     */
+    static createFinancialOverviewChart(canvasId, data = {}) {
+        const ctx = this.getContextSafe(canvasId);
+        if (!ctx) return;
+
+        this.destroyIfExists(canvasId);
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Sales',
+                        data: data.sales || [],
+                        backgroundColor: '#1a73e8',
+                        borderColor: '#1a73e8',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Expenses',
+                        data: data.expenses || [],
+                        backgroundColor: '#dc3545',
+                        borderColor: '#dc3545',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) =>
+                                `${ctx.dataset.label}: ₹${(ctx.raw || 0).toLocaleString('en-IN')}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (v) => '₹' + v.toLocaleString('en-IN')
+                        }
+                    }
                 }
-            });
+            }
+        });
+
+        this.charts.set(canvasId, chart);
+        return chart;
+    }
+
+    /** 
+     * Sales Trend Chart
+     */
+    static createSalesTrendChart(canvasId, data = {}) {
+        const ctx = this.getContextSafe(canvasId);
+        if (!ctx) return;
+
+        this.destroyIfExists(canvasId);
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Primary Sales',
+                        data: data.primary || [],
+                        borderColor: '#1a73e8',
+                        backgroundColor: 'rgba(26,115,232,0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Secondary Sales',
+                        data: data.secondary || [],
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46,125,50,0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) =>
+                                `${ctx.dataset.label}: ₹${(ctx.raw || 0).toLocaleString('en-IN')}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (v) => '₹' + v.toLocaleString('en-IN')
+                        }
+                    }
+                }
+            }
+        });
+
+        this.charts.set(canvasId, chart);
+        return chart;
+    }
+
+    /** 
+     * Product Performance Chart
+     */
+    static createProductPerformanceChart(canvasId, data = {}) {
+        const ctx = this.getContextSafe(canvasId);
+        if (!ctx) return;
+
+        this.destroyIfExists(canvasId);
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels || [],
+                datasets: [
+                    {
+                        label: 'Quantity Sold',
+                        data: data.quantities || [],
+                        backgroundColor: '#1a73e8',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Revenue (₹)',
+                        data: data.revenues || [],
+                        backgroundColor: '#2e7d32',
+                        type: 'line',
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Quantity' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        title: { display: true, text: 'Revenue (₹)' },
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: (v) => '₹' + v.toLocaleString('en-IN')
+                        }
+                    }
+                }
+            }
+        });
+
+        this.charts.set(canvasId, chart);
+        return chart;
+    }
+
+    /** 
+     * Expense Breakdown Chart
+     */
+    static createExpenseBreakdownChart(canvasId, data = {}) {
+        const ctx = this.getContextSafe(canvasId);
+        if (!ctx) return;
+
+        this.destroyIfExists(canvasId);
+
+        const chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.labels || [],
+                datasets: [
+                    {
+                        data: data.values || [],
+                        backgroundColor: [
+                            '#1a73e8', '#2e7d32', '#ffc107', '#dc3545',
+                            '#6f42c1', '#20c997', '#fd7e14', '#e83e8c'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const label = ctx.label || '';
+                                const value = ctx.raw || 0;
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const percent = total ? Math.round((value / total) * 100) : 0;
+                                return `${label}: ₹${value.toLocaleString('en-IN')} (${percent}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        this.charts.set(canvasId, chart);
+        return chart;
+    }
+
+    /** 
+     * Inventory Status Chart
+     */
+    static createInventoryStatusChart(canvasId, data = [0, 0, 0]) {
+        const ctx = this.getContextSafe(canvasId);
+        if (!ctx) return;
+
+        this.destroyIfExists(canvasId);
+
+        const chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Low Stock', 'Medium Stock', 'Good Stock'],
+                datasets: [
+                    {
+                        data: data,
+                        backgroundColor: ['#dc3545', '#ffc107', '#28a745'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const label = ctx.label || '';
+                                const value = ctx.raw || 0;
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const percent = total ? Math.round((value / total) * 100) : 0;
+                                return `${label}: ${value} products (${percent}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        this.charts.set(canvasId, chart);
+        return chart;
+    }
+
+    /** 
+     * Chart Update & Cleanup
+     */
+    static updateChart(canvasId, newData) {
+        const chart = this.charts.get(canvasId);
+        if (chart) {
+            chart.data = newData;
+            chart.update();
         }
+    }
+
+    static destroyChart(canvasId) {
+        this.destroyIfExists(canvasId);
+    }
+
+    static destroyAllCharts() {
+        this.charts.forEach((chart, id) => chart.destroy());
+        this.charts.clear();
     }
 }
