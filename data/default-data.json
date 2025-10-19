@@ -1,0 +1,83 @@
+{
+  "users": [
+    {
+      "id": "USR001",
+      "username": "admin",
+      "email": "admin@sanjhealthcare.com",
+      "password": "admin123",
+      "role": "admin",
+      "name": "System Administrator",
+      "phone": "+91-9876543210",
+      "isActive": true,
+      "createdAt": "2023-01-01T00:00:00.000Z"
+    }
+  ],
+  "settings": {
+    "company": {
+      "name": "Sanj Healthcare Pvt Ltd",
+      "legalName": "Sanj Healthcare Private Limited",
+      "address": {
+        "street": "Hospital Road",
+        "city": "Silchar",
+        "state": "Assam",
+        "pincode": "788001",
+        "country": "India"
+      },
+      "contact": {
+        "phone": "+91-3842-123456",
+        "email": "info@sanjhealthcare.com",
+        "website": "https://sanjhealthcare.com"
+      },
+      "registration": {
+        "gstin": "18AABCU9603R1ZM",
+        "pan": "AABCU9603R",
+        "cin": "U24246AS2023PTC012345"
+      }
+    },
+    "invoice": {
+      "prefix_stockist": "ST",
+      "prefix_superstockist": "SS",
+      "next_number": 1,
+      "terms_and_conditions": "1. Goods once sold will not be taken back.\n2. Payment should be made within due date.\n3. Interest will be charged on overdue payments.\n4. All disputes subject to Silchar jurisdiction.",
+      "notes": "Thank you for your business!"
+    },
+    "tax": {
+      "default_rate": 12,
+      "cgst": 6,
+      "sgst": 6,
+      "igst": 12
+    }
+  },
+  "dashboard": {
+    "widgets": [
+      {
+        "id": "sales_overview",
+        "title": "Sales Overview",
+        "type": "chart",
+        "position": 1,
+        "visible": true
+      },
+      {
+        "id": "inventory_alerts",
+        "title": "Inventory Alerts",
+        "type": "alert",
+        "position": 2,
+        "visible": true
+      },
+      {
+        "id": "recent_activities",
+        "title": "Recent Activities",
+        "type": "list",
+        "position": 3,
+        "visible": true
+      },
+      {
+        "id": "financial_summary",
+        "title": "Financial Summary",
+        "type": "stats",
+        "position": 4,
+        "visible": true
+      }
+    ]
+  }
+}

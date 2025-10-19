@@ -1,0 +1,240 @@
+{
+  "app": {
+    "name": "Sanj Healthcare Management",
+    "version": "1.0.0",
+    "company": {
+      "name": "Sanj Healthcare Pvt Ltd",
+      "address": "Silchar, Assam, India",
+      "phone": "+91-XXXXX-XXXXX",
+      "email": "info@sanjhealthcare.com",
+      "website": "https://sanjhealthcare.com",
+      "gstin": "18AABCU9603R1ZM",
+      "pan": "AABCU9603R"
+    },
+    "currency": {
+      "symbol": "₹",
+      "code": "INR",
+      "format": "en-IN"
+    },
+    "tax": {
+      "default_rate": 12,
+      "cgst_rate": 6,
+      "sgst_rate": 6,
+      "igst_rate": 12
+    }
+  },
+  "features": {
+    "inventory_management": true,
+    "invoice_generation": true,
+    "sales_tracking": true,
+    "expense_tracking": true,
+    "loan_management": true,
+    "report_generation": true,
+    "offline_mode": true,
+    "data_export": true
+  },
+  "settings": {
+    "default_date_format": "DD/MM/YYYY",
+    "default_currency": "INR",
+    "auto_backup": true,
+    "backup_interval": 24,
+    "max_file_size": 10,
+    "theme": "light",
+    "language": "en"
+  },
+  "invoice": {
+    "series": {
+      "stockist": "ST",
+      "superstockist": "SS"
+    },
+    "terms": "Goods once sold will not be taken back",
+    "notes": "Please make payment within due date",
+    "payment_methods": ["Cash", "Bank Transfer", "UPI", "Cheque"]
+  },
+  "bonus_schemes": [
+    {
+      "code": "10+1",
+      "name": "10 Plus 1 Free",
+      "description": "Buy 10 get 1 free",
+      "active": true
+    },
+    {
+      "code": "10+2",
+      "name": "10 Plus 2 Free",
+      "description": "Buy 10 get 2 free",
+      "active": true
+    },
+    {
+      "code": "12+1",
+      "name": "12 Plus 1 Free",
+      "description": "Buy 12 get 1 free",
+      "active": true
+    },
+    {
+      "code": "15+1",
+      "name": "15 Plus 1 Free",
+      "description": "Buy 15 get 1 free",
+      "active": true
+    }
+  ],
+  "product_categories": [
+    {
+      "id": "CAT001",
+      "name": "Syrup",
+      "description": "Liquid medications and syrups"
+    },
+    {
+      "id": "CAT002",
+      "name": "Tablet",
+      "description": "Solid oral dosage forms"
+    },
+    {
+      "id": "CAT003",
+      "name": "Capsule",
+      "description": "Gelatin capsules"
+    },
+    {
+      "id": "CAT004",
+      "name": "Injection",
+      "description": "Injectable medications"
+    },
+    {
+      "id": "CAT005",
+      "name": "Ointment",
+      "description": "Topical applications"
+    },
+    {
+      "id": "CAT006",
+      "name": "Powder",
+      "description": "Medicinal powders"
+    }
+  ],
+  "expense_categories": {
+    "marketing": [
+      {
+        "id": "MKT001",
+        "name": "Doctor Meeting",
+        "description": "Meetings with doctors"
+      },
+      {
+        "id": "MKT002",
+        "name": "Conference",
+        "description": "Medical conferences and events"
+      },
+      {
+        "id": "MKT003",
+        "name": "Samples",
+        "description": "Product samples distribution"
+      },
+      {
+        "id": "MKT004",
+        "name": "Promotional",
+        "description": "Promotional materials and activities"
+      },
+      {
+        "id": "MKT005",
+        "name": "Travel",
+        "description": "Travel expenses for marketing"
+      }
+    ],
+    "operating": [
+      {
+        "id": "OPR001",
+        "name": "Salary",
+        "description": "Staff salaries and wages"
+      },
+      {
+        "id": "OPR002",
+        "name": "Rent",
+        "description": "Office and warehouse rent"
+      },
+      {
+        "id": "OPR003",
+        "name": "Utilities",
+        "description": "Electricity, water, internet"
+      },
+      {
+        "id": "OPR004",
+        "name": "Office Supplies",
+        "description": "Stationery and office materials"
+      },
+      {
+        "id": "OPR005",
+        "name": "Maintenance",
+        "description": "Equipment and facility maintenance"
+      },
+      {
+        "id": "OPR006",
+        "name": "Insurance",
+        "description": "Business insurance premiums"
+      },
+      {
+        "id": "OPR007",
+        "name": "Professional Fees",
+        "description": "Legal and professional services"
+      },
+      {
+        "id": "OPR008",
+        "name": "Loan EMI",
+        "description": "Loan equated monthly installments"
+      },
+      {
+        "id": "OPR009",
+        "name": "Interest Payment",
+        "description": "Interest payments on loans"
+      }
+    ]
+  },
+  "regions": [
+    {
+      "id": "REG001",
+      "name": "Silchar",
+      "state": "Assam",
+      "districts": ["Cachar", "Karimganj", "Hailakandi"]
+    },
+    {
+      "id": "REG002",
+      "name": "Guwahati",
+      "state": "Assam",
+      "districts": ["Kamrup Metropolitan", "Kamrup Rural"]
+    },
+    {
+      "id": "REG003",
+      "name": "North East",
+      "state": "Multiple",
+      "districts": ["All North Eastern States"]
+    }
+  ],
+  "payment_terms": [
+    {
+      "code": "COD",
+      "name": "Cash on Delivery",
+      "days": 0
+    },
+    {
+      "code": "7DAYS",
+      "name": "7 Days",
+      "days": 7
+    },
+    {
+      "code": "15DAYS",
+      "name": "15 Days",
+      "days": 15
+    },
+    {
+      "code": "30DAYS",
+      "name": "30 Days",
+      "days": 30
+    },
+    {
+      "code": "45DAYS",
+      "name": "45 Days",
+      "days": 45
+    },
+    {
+      "code": "60DAYS",
+      "name": "60 Days",
+      "days": 60
+    }
+  ]
+}
