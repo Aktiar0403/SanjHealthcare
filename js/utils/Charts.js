@@ -172,4 +172,4 @@ class ChartManager {
     }
 }
 
-export default ChartManager;
+
