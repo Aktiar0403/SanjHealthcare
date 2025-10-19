@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanj Healthcare - Inventory Management</title>
+    <title>Sanj Healthcare - Complete Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -106,6 +106,7 @@
         .nav-tabs {
             display: flex;
             list-style: none;
+            overflow-x: auto;
         }
         
         .nav-tabs li {
@@ -116,6 +117,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
         
         .nav-tabs li.active {
@@ -205,6 +207,11 @@
             color: var(--primary);
         }
         
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -237,7 +244,7 @@
             font-weight: 500;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -271,7 +278,7 @@
         
         .modal-content {
             background-color: white;
-            width: 600px;
+            width: 800px;
             max-width: 90%;
             border-radius: 8px;
             padding: 20px;
@@ -372,12 +379,14 @@
             display: flex;
             border-bottom: 1px solid #ddd;
             margin-bottom: 15px;
+            overflow-x: auto;
         }
         
         .tab {
             padding: 10px 20px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
+            white-space: nowrap;
         }
         
         .tab.active {
@@ -445,6 +454,94 @@
             background-color: var(--primary);
         }
         
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table th {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .invoice-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-totals {
+            width: 300px;
+            margin-left: auto;
+        }
+        
+        .invoice-totals table {
+            width: 100%;
+        }
+        
+        .invoice-totals td {
+            padding: 8px 10px;
+        }
+        
+        .invoice-totals tr:last-child {
+            font-weight: bold;
+            border-top: 2px solid #eee;
+        }
+        
+        .bonus-badge {
+            background-color: var(--success);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .discount-badge {
+            background-color: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .expense-card {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .debt-card {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
@@ -457,6 +554,55 @@
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .invoice-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* PWA Styles */
+        #installButton {
+            display: none;
+        }
+        
+        .app-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .menu-item {
+            flex: 1;
+            min-width: 150px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .menu-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .menu-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .menu-desc {
+            font-size: 12px;
+            color: #7f8c8d;
         }
     </style>
 </head>
@@ -467,7 +613,7 @@
                 <div class="company-info">
                     <div class="logo">SH</div>
                     <div class="company-details">
-                        <h1>Sanj Healthcare Pvt Ltd</h1>
+                        <h1>Sanj Healthcare - Complete Management</h1>
                         <p>Silchar, Assam | Pharmaceutical Company</p>
                     </div>
                 </div>
@@ -476,6 +622,9 @@
                     <span class="role-badge" id="current-role">Admin</span>
                     <button class="btn btn-outline" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <button class="btn btn-primary" id="installButton" style="display: none;">
+                        <i class="fas fa-download"></i> Install App
                     </button>
                 </div>
             </div>
@@ -491,20 +640,26 @@
                 <li data-tab="products">
                     <i class="fas fa-pills"></i> Products
                 </li>
+                <li data-tab="distributors">
+                    <i class="fas fa-users"></i> Distributors
+                </li>
                 <li data-tab="inventory">
                     <i class="fas fa-boxes"></i> Inventory
+                </li>
+                <li data-tab="invoices">
+                    <i class="fas fa-file-invoice"></i> Invoices
                 </li>
                 <li data-tab="sales">
                     <i class="fas fa-chart-line"></i> Sales Data
                 </li>
-                <li data-tab="forecasting">
-                    <i class="fas fa-calculator"></i> Forecasting
+                <li data-tab="expenses">
+                    <i class="fas fa-money-bill-wave"></i> Expenses
+                </li>
+                <li data-tab="debts">
+                    <i class="fas fa-hand-holding-usd"></i> Debts & Loans
                 </li>
                 <li data-tab="reports">
                     <i class="fas fa-file-alt"></i> Reports
-                </li>
-                <li data-tab="users" class="role-restricted" data-role="admin">
-                    <i class="fas fa-users"></i> Users
                 </li>
             </ul>
         </div>
@@ -513,68 +668,111 @@
     <div class="container">
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
+            <div class="app-menu">
+                <div class="menu-item" data-tab="products">
+                    <div class="menu-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="menu-title">Products</div>
+                    <div class="menu-desc">Manage products, pricing & categories</div>
+                </div>
+                <div class="menu-item" data-tab="distributors">
+                    <div class="menu-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="menu-title">Distributors</div>
+                    <div class="menu-desc">Stockists & Superstockists</div>
+                </div>
+                <div class="menu-item" data-tab="inventory">
+                    <div class="menu-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="menu-title">Inventory</div>
+                    <div class="menu-desc">Stock levels & management</div>
+                </div>
+                <div class="menu-item" data-tab="invoices">
+                    <div class="menu-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="menu-title">Invoices</div>
+                    <div class="menu-desc">Create & manage invoices</div>
+                </div>
+                <div class="menu-item" data-tab="sales">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="menu-title">Sales Data</div>
+                    <div class="menu-desc">Primary & secondary sales</div>
+                </div>
+                <div class="menu-item" data-tab="expenses">
+                    <div class="menu-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="menu-title">Expenses</div>
+                    <div class="menu-desc">Marketing & operating costs</div>
+                </div>
+                <div class="menu-item" data-tab="debts">
+                    <div class="menu-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div class="menu-title">Debts & Loans</div>
+                    <div class="menu-desc">Loan tracking & payments</div>
+                </div>
+                <div class="menu-item" data-tab="reports">
+                    <div class="menu-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="menu-title">Reports</div>
+                    <div class="menu-desc">Analytics & insights</div>
+                </div>
+            </div>
+            
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-label">Total Products</div>
-                    <div class="stat-value" id="total-products">6</div>
+                    <div class="stat-value" id="total-products">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Low Stock Items</div>
-                    <div class="stat-value" id="low-stock">2</div>
+                    <div class="stat-label">Active Distributors</div>
+                    <div class="stat-value" id="total-distributors">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Monthly Sales</div>
-                    <div class="stat-value" id="month-sales">₹4,82,500</div>
+                    <div class="stat-value" id="month-sales">₹0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Growth Rate</div>
-                    <div class="stat-value" id="growth-rate">12.5%</div>
+                    <div class="stat-label">Total Expenses</div>
+                    <div class="stat-value" id="total-expenses">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Loans</div>
+                    <div class="stat-value" id="active-loans">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Payments</div>
+                    <div class="stat-value" id="pending-payments">₹0</div>
                 </div>
             </div>
             
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-exclamation-triangle"></i> Low Stock Alert
+                        <i class="fas fa-exclamation-triangle"></i> Alerts & Notifications
                     </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Current Stock</th>
-                            <th>Minimum Stock</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="low-stock-table">
-                        <tr>
-                            <td>SAZ LQ10</td>
-                            <td>45</td>
-                            <td>50</td>
-                            <td class="stock-low">Low Stock</td>
-                            <td><button class="btn btn-primary">Reorder</button></td>
-                        </tr>
-                        <tr>
-                            <td>NEURON PLUS INJECTION</td>
-                            <td>32</td>
-                            <td>40</td>
-                            <td class="stock-low">Low Stock</td>
-                            <td><button class="btn btn-primary">Reorder</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="alerts-container">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
             </div>
             
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-chart-bar"></i> Monthly Sales Trend
+                        <i class="fas fa-chart-bar"></i> Financial Overview
                     </div>
                 </div>
                 <div class="chart-container">
-                    <canvas id="salesTrendChart"></canvas>
+                    <canvas id="financialOverviewChart"></canvas>
                 </div>
             </div>
         </div>
@@ -584,126 +782,77 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-pills"></i> Product List
+                        <i class="fas fa-pills"></i> Product Management
                     </div>
                     <button class="btn btn-primary" id="add-product-btn">
                         <i class="fas fa-plus"></i> Add Product
                     </button>
                 </div>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-name">SAZ LQ10</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹120</span>
-                            <span>MRP: ₹180</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Syrup</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 65%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 45/100</span>
-                            <span class="stock-low">Low</span>
-                        </div>
+                <div class="product-grid" id="products-grid">
+                    <!-- Products will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Distributors Tab -->
+        <div id="distributors" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-users"></i> Distributor Management
                     </div>
-                    
-                    <div class="product-card">
-                        <div class="product-name">CALSANZ FEM</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹85</span>
-                            <span>MRP: ₹130</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Tablet</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 80%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 80/100</span>
-                            <span class="stock-high">Good</span>
-                        </div>
+                    <div>
+                        <button class="btn btn-primary" id="add-stockist-btn">
+                            <i class="fas fa-plus"></i> Add Stockist
+                        </button>
+                        <button class="btn btn-success" id="add-superstockist-btn">
+                            <i class="fas fa-plus"></i> Add Superstockist
+                        </button>
                     </div>
-                    
-                    <div class="product-card">
-                        <div class="product-name">CALSANZ STRONG</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹95</span>
-                            <span>MRP: ₹150</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Tablet</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 75%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 75/100</span>
-                            <span class="stock-high">Good</span>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-name">NEURON PLUS INJECTION</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹45</span>
-                            <span>MRP: ₹70</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Injection</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 32%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 32/100</span>
-                            <span class="stock-low">Low</span>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-name">RABSANZ DSR</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹110</span>
-                            <span>MRP: ₹165</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Capsule</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 90%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 90/100</span>
-                            <span class="stock-high">Good</span>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-name">SINOPLEX SYRUP</div>
-                        <div class="product-details">
-                            <span>Cost Price: ₹75</span>
-                            <span>MRP: ₹115</span>
-                        </div>
-                        <div class="product-details">
-                            <span>GST: 12%</span>
-                            <span>Category: Syrup</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 70%"></div>
-                        </div>
-                        <div class="product-details">
-                            <span>Stock: 70/100</span>
-                            <span class="stock-medium">Medium</span>
-                        </div>
-                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="stockists">Stockists</div>
+                    <div class="tab" data-tab="superstockists">Superstockists</div>
+                </div>
+                
+                <div class="tab-content-inner active" id="stockists-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Region</th>
+                                <th>Credit Limit</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockists-table">
+                            <!-- Stockists will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="tab-content-inner" id="superstockists-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Region</th>
+                                <th>Credit Limit</th>
+                                <th>Stockists</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="superstockists-table">
+                            <!-- Superstockists will be populated by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -713,7 +862,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-boxes"></i> Inventory Levels
+                        <i class="fas fa-boxes"></i> Inventory Management
                     </div>
                     <button class="btn btn-primary" id="update-stock-btn">
                         <i class="fas fa-edit"></i> Update Stock
@@ -729,65 +878,75 @@
                             <th>Total</th>
                             <th>Min Stock</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="inventory-table">
-                        <tr>
-                            <td>SAZ LQ10</td>
-                            <td>500</td>
-                            <td>300</td>
-                            <td>45</td>
-                            <td>845</td>
-                            <td>50</td>
-                            <td class="stock-low">Reorder</td>
-                        </tr>
-                        <tr>
-                            <td>CALSANZ FEM</td>
-                            <td>600</td>
-                            <td>400</td>
-                            <td>80</td>
-                            <td>1080</td>
-                            <td>50</td>
-                            <td class="stock-high">Good</td>
-                        </tr>
-                        <tr>
-                            <td>CALSANZ STRONG</td>
-                            <td>550</td>
-                            <td>350</td>
-                            <td>75</td>
-                            <td>975</td>
-                            <td>50</td>
-                            <td class="stock-high">Good</td>
-                        </tr>
-                        <tr>
-                            <td>NEURON PLUS INJECTION</td>
-                            <td>400</td>
-                            <td>250</td>
-                            <td>32</td>
-                            <td>682</td>
-                            <td>40</td>
-                            <td class="stock-low">Reorder</td>
-                        </tr>
-                        <tr>
-                            <td>RABSANZ DSR</td>
-                            <td>700</td>
-                            <td>450</td>
-                            <td>90</td>
-                            <td>1240</td>
-                            <td>50</td>
-                            <td class="stock-high">Good</td>
-                        </tr>
-                        <tr>
-                            <td>SINOPLEX SYRUP</td>
-                            <td>450</td>
-                            <td>300</td>
-                            <td>70</td>
-                            <td>820</td>
-                            <td>50</td>
-                            <td class="stock-medium">Medium</td>
-                        </tr>
+                        <!-- Inventory will be populated by JavaScript -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+        
+        <!-- Invoices Tab -->
+        <div id="invoices" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-file-invoice"></i> Invoice Management
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" id="add-invoice-btn">
+                            <i class="fas fa-plus"></i> Create Invoice
+                        </button>
+                        <button class="btn btn-outline" id="import-invoice-btn">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="stockist-invoices">Stockist Invoices</div>
+                    <div class="tab" data-tab="superstockist-invoices">Superstockist Invoices</div>
+                </div>
+                
+                <div class="tab-content-inner active" id="stockist-invoices-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice No.</th>
+                                <th>Date</th>
+                                <th>Stockist</th>
+                                <th>Retailer</th>
+                                <th>Amount (₹)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockist-invoices-table">
+                            <!-- Stockist invoices will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="tab-content-inner" id="superstockist-invoices-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice No.</th>
+                                <th>Date</th>
+                                <th>Superstockist</th>
+                                <th>Stockist</th>
+                                <th>Amount (₹)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="superstockist-invoices-table">
+                            <!-- Superstockist invoices will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         
@@ -796,7 +955,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-chart-line"></i> Monthly Sales Data
+                        <i class="fas fa-chart-line"></i> Sales Data Management
                     </div>
                     <div class="month-selector">
                         <select id="sales-month">
@@ -806,17 +965,10 @@
                             <option value="4">April</option>
                             <option value="5">May</option>
                             <option value="6" selected>June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
                         </select>
                         <select id="sales-year">
-                            <option value="2022">2022</option>
                             <option value="2023" selected>2023</option>
-                            <option value="2024">2024</option>
+                            <option value="2022">2022</option>
                         </select>
                         <button class="btn btn-primary" id="update-sales-btn">
                             <i class="fas fa-sync"></i> Update
@@ -830,290 +982,183 @@
                 </div>
                 
                 <div class="tab-content-inner active" id="primary-sales-content">
-                    <div class="highlight">
-                        <i class="fas fa-info-circle"></i> Primary sales data is entered by Superstockist showing sales to Stockists
-                    </div>
                     <table>
                         <thead>
                             <tr>
                                 <th>Product</th>
                                 <th>Quantity Sold</th>
                                 <th>Amount (₹)</th>
-                                <th>Growth (%)</th>
+                                <th>Discount</th>
+                                <th>Bonus</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>SAZ LQ10</td>
-                                <td>1,250</td>
-                                <td>1,50,000</td>
-                                <td class="stock-high">+15%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ FEM</td>
-                                <td>980</td>
-                                <td>83,300</td>
-                                <td class="stock-high">+8%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ STRONG</td>
-                                <td>1,100</td>
-                                <td>1,04,500</td>
-                                <td class="stock-high">+12%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>NEURON PLUS INJECTION</td>
-                                <td>2,500</td>
-                                <td>1,12,500</td>
-                                <td class="stock-medium">+5%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RABSANZ DSR</td>
-                                <td>850</td>
-                                <td>93,500</td>
-                                <td class="stock-high">+18%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>SINOPLEX SYRUP</td>
-                                <td>1,500</td>
-                                <td>1,12,500</td>
-                                <td class="stock-medium">+7%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
+                        <tbody id="primary-sales-table">
+                            <!-- Primary sales will be populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
                 
                 <div class="tab-content-inner" id="secondary-sales-content">
-                    <div class="highlight">
-                        <i class="fas fa-info-circle"></i> Secondary sales data is entered by Stockists showing sales to Retailers
-                    </div>
                     <table>
                         <thead>
                             <tr>
                                 <th>Product</th>
                                 <th>Quantity Sold</th>
                                 <th>Amount (₹)</th>
-                                <th>Growth (%)</th>
+                                <th>Discount</th>
+                                <th>Bonus</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>SAZ LQ10</td>
-                                <td>1,150</td>
-                                <td>1,38,000</td>
-                                <td class="stock-high">+12%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ FEM</td>
-                                <td>920</td>
-                                <td>78,200</td>
-                                <td class="stock-medium">+6%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ STRONG</td>
-                                <td>1,050</td>
-                                <td>99,750</td>
-                                <td class="stock-high">+10%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>NEURON PLUS INJECTION</td>
-                                <td>2,400</td>
-                                <td>1,08,000</td>
-                                <td class="stock-medium">+4%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RABSANZ DSR</td>
-                                <td>800</td>
-                                <td>88,000</td>
-                                <td class="stock-high">+15%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>SINOPLEX SYRUP</td>
-                                <td>1,450</td>
-                                <td>1,08,750</td>
-                                <td class="stock-medium">+5%</td>
-                                <td>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </td>
-                            </tr>
+                        <tbody id="secondary-sales-table">
+                            <!-- Secondary sales will be populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
         
-        <!-- Forecasting Tab -->
-        <div id="forecasting" class="tab-content">
+        <!-- Expenses Tab -->
+        <div id="expenses" class="tab-content">
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-calculator"></i> Demand Forecasting
+                        <i class="fas fa-money-bill-wave"></i> Expense Management
                     </div>
-                    <button class="btn btn-primary" id="generate-forecast-btn">
-                        <i class="fas fa-chart-line"></i> Generate Forecast
-                    </button>
-                </div>
-                
-                <div class="stats-container">
-                    <div class="stat-card forecast-card">
-                        <div class="stat-label">Next Month Forecast</div>
-                        <div class="stat-value">₹5,42,000</div>
-                    </div>
-                    <div class="stat-card forecast-card">
-                        <div class="stat-label">Growth Expected</div>
-                        <div class="stat-value">+12.3%</div>
-                    </div>
-                    <div class="stat-card forecast-card">
-                        <div class="stat-label">Reorder Suggestions</div>
-                        <div class="stat-value">3 Products</div>
+                    <div>
+                        <button class="btn btn-primary" id="add-expense-btn">
+                            <i class="fas fa-plus"></i> Add Expense
+                        </button>
                     </div>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-box"></i> Product-wise Forecast & Requirements
-                        </div>
+                <div class="tabs">
+                    <div class="tab active" data-tab="marketing-expenses">Marketing Expenses</div>
+                    <div class="tab" data-tab="operating-expenses">Operating Expenses</div>
+                </div>
+                
+                <div class="tab-content-inner active" id="marketing-expenses-content">
+                    <div class="highlight">
+                        <i class="fas fa-info-circle"></i> Marketing expenses include doctor investments, promotions, etc.
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Current Stock</th>
-                                <th>Monthly Avg Sales</th>
-                                <th>Next Month Forecast</th>
-                                <th>Stock Cover (Days)</th>
-                                <th>Recommended Order</th>
-                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Doctor/Event</th>
+                                <th>Amount (₹)</th>
+                                <th>Category</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>SAZ LQ10</td>
-                                <td>845</td>
-                                <td>1,200</td>
-                                <td>1,380</td>
-                                <td>21</td>
-                                <td>600</td>
-                                <td class="stock-low">Reorder Now</td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ FEM</td>
-                                <td>1,080</td>
-                                <td>950</td>
-                                <td>1,023</td>
-                                <td>34</td>
-                                <td>300</td>
-                                <td class="stock-high">Adequate</td>
-                            </tr>
-                            <tr>
-                                <td>CALSANZ STRONG</td>
-                                <td>975</td>
-                                <td>1,050</td>
-                                <td>1,155</td>
-                                <td>28</td>
-                                <td>400</td>
-                                <td class="stock-medium">Monitor</td>
-                            </tr>
-                            <tr>
-                                <td>NEURON PLUS INJECTION</td>
-                                <td>682</td>
-                                <td>2,450</td>
-                                <td>2,572</td>
-                                <td>8</td>
-                                <td>2,000</td>
-                                <td class="stock-low">Urgent Reorder</td>
-                            </tr>
-                            <tr>
-                                <td>RABSANZ DSR</td>
-                                <td>1,240</td>
-                                <td>825</td>
-                                <td>950</td>
-                                <td>44</td>
-                                <td>200</td>
-                                <td class="stock-high">Adequate</td>
-                            </tr>
-                            <tr>
-                                <td>SINOPLEX SYRUP</td>
-                                <td>820</td>
-                                <td>1,475</td>
-                                <td>1,550</td>
-                                <td>16</td>
-                                <td>800</td>
-                                <td class="stock-low">Reorder Soon</td>
-                            </tr>
+                        <tbody id="marketing-expenses-table">
+                            <!-- Marketing expenses will be populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-chart-bar"></i> Sales Forecast Trend
-                        </div>
+                <div class="tab-content-inner" id="operating-expenses-content">
+                    <div class="highlight">
+                        <i class="fas fa-info-circle"></i> Operating expenses include salaries, utilities, rent, etc.
                     </div>
-                    <div class="chart-container">
-                        <canvas id="forecastChart"></canvas>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount (₹)</th>
+                                <th>Recurring</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="operating-expenses-table">
+                            <!-- Operating expenses will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Debts & Loans Tab -->
+        <div id="debts" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-hand-holding-usd"></i> Debt & Loan Management
                     </div>
+                    <div>
+                        <button class="btn btn-primary" id="add-loan-btn">
+                            <i class="fas fa-plus"></i> Add Loan
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="bank-loans">Bank Loans</div>
+                    <div class="tab" data-tab="personal-loans">Personal Loans</div>
+                    <div class="tab" data-tab="payments">Payment History</div>
+                </div>
+                
+                <div class="tab-content-inner active" id="bank-loans-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Bank</th>
+                                <th>Amount (₹)</th>
+                                <th>Interest Rate</th>
+                                <th>EMI</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bank-loans-table">
+                            <!-- Bank loans will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="tab-content-inner" id="personal-loans-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Lender</th>
+                                <th>Amount (₹)</th>
+                                <th>Interest Rate</th>
+                                <th>Monthly Interest</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personal-loans-table">
+                            <!-- Personal loans will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="tab-content-inner" id="payments-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Loan ID</th>
+                                <th>Type</th>
+                                <th>Amount (₹)</th>
+                                <th>Principal</th>
+                                <th>Interest</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payments-table">
+                            <!-- Payments will be populated by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1123,7 +1168,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fas fa-file-alt"></i> Monthly Sales Report
+                        <i class="fas fa-file-alt"></i> Reports & Analytics
                     </div>
                     <div class="month-selector">
                         <select id="report-month">
@@ -1133,17 +1178,10 @@
                             <option value="4">April</option>
                             <option value="5">May</option>
                             <option value="6" selected>June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
                         </select>
                         <select id="report-year">
-                            <option value="2022">2022</option>
                             <option value="2023" selected>2023</option>
-                            <option value="2024">2024</option>
+                            <option value="2022">2022</option>
                         </select>
                         <button class="btn btn-primary">
                             <i class="fas fa-download"></i> Download
@@ -1155,215 +1193,193 @@
                     <canvas id="monthlyReportChart"></canvas>
                 </div>
                 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Primary Sales (Units)</th>
-                            <th>Secondary Sales (Units)</th>
-                            <th>Primary Sales (₹)</th>
-                            <th>Secondary Sales (₹)</th>
-                            <th>Growth (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>SAZ LQ10</td>
-                            <td>1,250</td>
-                            <td>1,150</td>
-                            <td>1,50,000</td>
-                            <td>1,38,000</td>
-                            <td class="stock-high">+12%</td>
-                        </tr>
-                        <tr>
-                            <td>CALSANZ FEM</td>
-                            <td>980</td>
-                            <td>920</td>
-                            <td>83,300</td>
-                            <td>78,200</td>
-                            <td class="stock-medium">+6%</td>
-                        </tr>
-                        <tr>
-                            <td>CALSANZ STRONG</td>
-                            <td>1,100</td>
-                            <td>1,050</td>
-                            <td>1,04,500</td>
-                            <td>99,750</td>
-                            <td class="stock-high">+10%</td>
-                        </tr>
-                        <tr>
-                            <td>NEURON PLUS INJECTION</td>
-                            <td>2,500</td>
-                            <td>2,400</td>
-                            <td>1,12,500</td>
-                            <td>1,08,000</td>
-                            <td class="stock-medium">+4%</td>
-                        </tr>
-                        <tr>
-                            <td>RABSANZ DSR</td>
-                            <td>850</td>
-                            <td>800</td>
-                            <td>93,500</td>
-                            <td>88,000</td>
-                            <td class="stock-high">+15%</td>
-                        </tr>
-                        <tr>
-                            <td>SINOPLEX SYRUP</td>
-                            <td>1,500</td>
-                            <td>1,450</td>
-                            <td>1,12,500</td>
-                            <td>1,08,750</td>
-                            <td class="stock-medium">+5%</td>
-                        </tr>
-                        <tr class="stock-high">
-                            <td><strong>Total</strong></td>
-                            <td><strong>8,180</strong></td>
-                            <td><strong>7,770</strong></td>
-                            <td><strong>6,56,300</strong></td>
-                            <td><strong>6,20,700</strong></td>
-                            <td><strong>+8.7%</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Users Tab -->
-        <div id="users" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-users"></i> User Management
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value">₹6,56,300</div>
                     </div>
-                    <button class="btn btn-primary" id="add-user-btn">
-                        <i class="fas fa-plus"></i> Add User
-                    </button>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Expenses</div>
+                        <div class="stat-value">₹1,25,000</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Net Profit</div>
+                        <div class="stat-value">₹5,31,300</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Profit Margin</div>
+                        <div class="stat-value">80.9%</div>
+                    </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Region</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="user-table">
-                        <tr>
-                            <td>001</td>
-                            <td>Admin User</td>
-                            <td>admin@sanjhealthcare.com</td>
-                            <td>Admin</td>
-                            <td>All</td>
-                            <td class="stock-high">Active</td>
-                            <td>
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>North Superstockist</td>
-                            <td>north@sanjhealthcare.com</td>
-                            <td>Superstockist</td>
-                            <td>North India</td>
-                            <td class="stock-high">Active</td>
-                            <td>
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>003</td>
-                            <td>East Stockist</td>
-                            <td>east@sanjhealthcare.com</td>
-                            <td>Stockist</td>
-                            <td>East India</td>
-                            <td class="stock-high">Active</td>
-                            <td>
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>004</td>
-                            <td>Silchar Retailer</td>
-                            <td>retailer@sanjhealthcare.com</td>
-                            <td>Retailer</td>
-                            <td>Silchar</td>
-                            <td class="stock-high">Active</td>
-                            <td>
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
 
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <h3>Install Sanj Healthcare App</h3>
+        <p>Install this app on your device for easy access</p>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="btn btn-primary" id="installAppBtn">Install</button>
+            <button class="btn btn-outline" id="dismissInstallBtn">Not Now</button>
+        </div>
+    </div>
+
+    <!-- JavaScript will be added here -->
     <script>
-        // Initialize Charts
+        // Data Models
+        const dataModels = {
+            products: [],
+            stockists: [],
+            superstockists: [],
+            inventory: [],
+            invoices: [],
+            sales: { primary: [], secondary: [] },
+            expenses: { marketing: [], operating: [] },
+            loans: { bank: [], personal: [] },
+            payments: []
+        };
+
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            // Sales Trend Chart
-            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
-            const salesTrendChart = new Chart(salesTrendCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Primary Sales (₹)',
-                        data: [520000, 580000, 610000, 590000, 630000, 656300],
-                        borderColor: '#1a73e8',
-                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }, {
-                        label: 'Secondary Sales (₹)',
-                        data: [480000, 520000, 550000, 540000, 580000, 620700],
-                        borderColor: '#2e7d32',
-                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Monthly Sales Trend (2023)'
-                        }
+            initializeApp();
+            setupEventListeners();
+            loadSampleData();
+            updateDashboard();
+        });
+
+        function initializeApp() {
+            // Check if service worker is supported
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
+            }
+
+            // Check if app is launched in standalone mode
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Running in standalone mode');
+            }
+
+            // Initialize charts
+            initializeCharts();
+        }
+
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-tabs li').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Menu items navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const tabId = item.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Inner tabs
+            document.querySelectorAll('.tabs .tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    const parent = tab.closest('.tab-content');
+                    switchInnerTab(parent, tabId);
+                });
+            });
+
+            // Install button
+            document.getElementById('installButton').addEventListener('click', installApp);
+
+            // PWA install prompt
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installButton').style.display = 'block';
+                document.getElementById('installPrompt').style.display = 'block';
+            });
+
+            document.getElementById('installAppBtn').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        document.getElementById('installPrompt').style.display = 'none';
                     }
+                    deferredPrompt = null;
                 }
             });
 
-            // Forecast Chart
-            const forecastCtx = document.getElementById('forecastChart').getContext('2d');
-            const forecastChart = new Chart(forecastCtx, {
+            document.getElementById('dismissInstallBtn').addEventListener('click', () => {
+                document.getElementById('installPrompt').style.display = 'none';
+            });
+        }
+
+        function switchTab(tabId) {
+            // Update active tab
+            document.querySelectorAll('.nav-tabs li').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Show active tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Update data if needed
+            if (tabId === 'dashboard') updateDashboard();
+            if (tabId === 'products') renderProducts();
+            if (tabId === 'distributors') renderDistributors();
+            if (tabId === 'inventory') renderInventory();
+            if (tabId === 'invoices') renderInvoices();
+            if (tabId === 'sales') renderSalesData();
+            if (tabId === 'expenses') renderExpenses();
+            if (tabId === 'debts') renderLoans();
+        }
+
+        function switchInnerTab(parent, tabId) {
+            // Update active inner tab
+            parent.querySelectorAll('.tabs .tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Show active inner tab content
+            parent.querySelectorAll('.tab-content-inner').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId + '-content') {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        function initializeCharts() {
+            // Financial Overview Chart
+            const financialCtx = document.getElementById('financialOverviewChart').getContext('2d');
+            new Chart(financialCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['SAZ LQ10', 'CALSANZ FEM', 'CALSANZ STRONG', 'NEURON PLUS', 'RABSANZ DSR', 'SINOPLEX'],
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
-                        label: 'Current Month Sales',
-                        data: [1250, 980, 1100, 2500, 850, 1500],
+                        label: 'Sales',
+                        data: [520000, 580000, 610000, 590000, 630000, 656300],
                         backgroundColor: '#1a73e8'
                     }, {
-                        label: 'Next Month Forecast',
-                        data: [1380, 1023, 1155, 2572, 950, 1550],
-                        backgroundColor: '#2e7d32'
+                        label: 'Expenses',
+                        data: [120000, 110000, 125000, 130000, 115000, 125000],
+                        backgroundColor: '#dc3545'
                     }]
                 },
                 options: {
@@ -1372,29 +1388,20 @@
                     plugins: {
                         legend: {
                             position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Product-wise Sales Forecast'
                         }
                     }
                 }
             });
 
             // Monthly Report Chart
-            const monthlyReportCtx = document.getElementById('monthlyReportChart').getContext('2d');
-            const monthlyReportChart = new Chart(monthlyReportCtx, {
-                type: 'bar',
+            const monthlyCtx = document.getElementById('monthlyReportChart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'doughnut',
                 data: {
-                    labels: ['SAZ LQ10', 'CALSANZ FEM', 'CALSANZ STRONG', 'NEURON PLUS', 'RABSANZ DSR', 'SINOPLEX'],
+                    labels: ['Sales', 'Marketing Expenses', 'Operating Expenses', 'Loan Payments'],
                     datasets: [{
-                        label: 'Primary Sales',
-                        data: [150000, 83300, 104500, 112500, 93500, 112500],
-                        backgroundColor: '#1a73e8'
-                    }, {
-                        label: 'Secondary Sales',
-                        data: [138000, 78200, 99750, 108000, 88000, 108750],
-                        backgroundColor: '#2e7d32'
+                        data: [656300, 45000, 80000, 25000],
+                        backgroundColor: ['#1a73e8', '#28a745', '#ffc107', '#dc3545']
                     }]
                 },
                 options: {
@@ -1402,76 +1409,350 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'June 2023 Sales Report'
+                            position: 'right',
                         }
                     }
                 }
             });
+        }
 
-            // Tab Navigation
-            const navTabs = document.querySelectorAll('.nav-tabs li');
-            const tabContents = document.querySelectorAll('.tab-content');
+        function loadSampleData() {
+            // Sample products
+            dataModels.products = [
+                { id: 1, name: "SAZ LQ10", category: "Syrup", costPrice: 120, mrp: 180, taxRate: 12 },
+                { id: 2, name: "CALSANZ FEM", category: "Tablet", costPrice: 85, mrp: 130, taxRate: 12 },
+                { id: 3, name: "CALSANZ STRONG", category: "Tablet", costPrice: 95, mrp: 150, taxRate: 12 },
+                { id: 4, name: "NEURON PLUS INJECTION", category: "Injection", costPrice: 45, mrp: 70, taxRate: 12 },
+                { id: 5, name: "RABSANZ DSR", category: "Capsule", costPrice: 110, mrp: 165, taxRate: 12 },
+                { id: 6, name: "SINOPLEX SYRUP", category: "Syrup", costPrice: 75, mrp: 115, taxRate: 12 }
+            ];
+
+            // Sample distributors
+            dataModels.stockists = [
+                { id: 1, name: "Silchar Stockist", contact: "9876543210", region: "Silchar", creditLimit: 500000, status: "Active" },
+                { id: 2, name: "Guwahati Stockist", contact: "9876543211", region: "Guwahati", creditLimit: 750000, status: "Active" }
+            ];
+
+            dataModels.superstockists = [
+                { id: 1, name: "North East Superstockist", contact: "9876543212", region: "North East", creditLimit: 2000000, stockists: 5, status: "Active" }
+            ];
+
+            // Sample inventory
+            dataModels.inventory = dataModels.products.map(product => ({
+                productId: product.id,
+                productName: product.name,
+                superstockist: Math.floor(Math.random() * 500) + 300,
+                stockist: Math.floor(Math.random() * 300) + 200,
+                retailer: Math.floor(Math.random() * 100) + 50,
+                minStock: 50
+            }));
+
+            // Sample expenses
+            dataModels.expenses.marketing = [
+                { id: 1, date: "2023-06-15", description: "Doctor Conference", doctor: "Dr. Sharma", amount: 15000, category: "Event" },
+                { id: 2, date: "2023-06-20", description: "Product Samples", doctor: "Multiple", amount: 8000, category: "Samples" }
+            ];
+
+            dataModels.expenses.operating = [
+                { id: 1, date: "2023-06-01", description: "Staff Salary", category: "Salary", amount: 45000, recurring: true },
+                { id: 2, date: "2023-06-05", description: "Office Rent", category: "Rent", amount: 20000, recurring: true }
+            ];
+
+            // Sample loans
+            dataModels.loans.bank = [
+                { id: 1, bank: "SBI", amount: 500000, interestRate: 9.5, emi: 12500, balance: 450000, status: "Active" }
+            ];
+
+            dataModels.loans.personal = [
+                { id: 1, lender: "Mr. Agarwal", amount: 200000, interestRate: 12, monthlyInterest: 2000, balance: 200000, status: "Active" }
+            ];
+        }
+
+        function updateDashboard() {
+            document.getElementById('total-products').textContent = dataModels.products.length;
+            document.getElementById('total-distributors').textContent = dataModels.stockists.length + dataModels.superstockists.length;
             
-            navTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    navTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // Show active tab content
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === tabId) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
-
-            // Sales Data Tabs
-            const salesTabs = document.querySelectorAll('#sales .tab');
-            const salesTabContents = document.querySelectorAll('#sales .tab-content-inner');
+            // Calculate monthly sales (simplified)
+            const monthlySales = 656300;
+            document.getElementById('month-sales').textContent = `₹${monthlySales.toLocaleString()}`;
             
-            salesTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    salesTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // Show active tab content
-                    salesTabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === tabId + '-content') {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
+            // Calculate total expenses
+            const totalExpenses = dataModels.expenses.marketing.reduce((sum, exp) => sum + exp.amount, 0) +
+                                dataModels.expenses.operating.reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById('total-expenses').textContent = `₹${totalExpenses.toLocaleString()}`;
+            
+            document.getElementById('active-loans').textContent = dataModels.loans.bank.length + dataModels.loans.personal.length;
+            
+            // Update alerts
+            updateAlerts();
+        }
 
-            // Update UI based on role
-            function updateUIForRole() {
-                const currentRole = document.getElementById('current-role').textContent;
-                document.querySelectorAll('.role-restricted').forEach(element => {
-                    const requiredRole = element.getAttribute('data-role');
-                    if (requiredRole === currentRole || currentRole === 'Admin') {
-                        element.style.display = 'block';
-                    } else {
-                        element.style.display = 'none';
+        function updateAlerts() {
+            const alertsContainer = document.getElementById('alerts-container');
+            alertsContainer.innerHTML = '';
+            
+            // Low stock alerts
+            const lowStockItems = dataModels.inventory.filter(item => 
+                (item.superstockist + item.stockist + item.retailer) < item.minStock * 2
+            );
+            
+            if (lowStockItems.length > 0) {
+                const alert = document.createElement('div');
+                alert.className = 'highlight';
+                alert.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 
+                    ${lowStockItems.length} products have low stock levels`;
+                alertsContainer.appendChild(alert);
+            }
+            
+            // Payment due alerts
+            const paymentAlert = document.createElement('div');
+            paymentAlert.className = 'highlight';
+            paymentAlert.innerHTML = `<i class="fas fa-clock"></i> 
+                Loan payment of ₹12,500 due in 5 days`;
+            alertsContainer.appendChild(paymentAlert);
+        }
+
+        function renderProducts() {
+            const productsGrid = document.getElementById('products-grid');
+            productsGrid.innerHTML = '';
+            
+            dataModels.products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-details">
+                        <span>Cost: ₹${product.costPrice}</span>
+                        <span>MRP: ₹${product.mrp}</span>
+                    </div>
+                    <div class="product-details">
+                        <span>GST: ${product.taxRate}%</span>
+                        <span>${product.category}</span>
+                    </div>
+                    <div class="product-details" style="margin-top: 10px;">
+                        <button class="btn btn-outline btn-sm edit-product" data-id="${product.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-product" data-id="${product.id}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        function renderDistributors() {
+            // Render stockists
+            const stockistsTable = document.getElementById('stockists-table');
+            stockistsTable.innerHTML = '';
+            
+            dataModels.stockists.forEach(stockist => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>ST${stockist.id.toString().padStart(3, '0')}</td>
+                    <td>${stockist.name}</td>
+                    <td>${stockist.contact}</td>
+                    <td>${stockist.region}</td>
+                    <td>₹${stockist.creditLimit.toLocaleString()}</td>
+                    <td class="stock-high">${stockist.status}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-stockist" data-id="${stockist.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-stockist" data-id="${stockist.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                stockistsTable.appendChild(row);
+            });
+            
+            // Render superstockists
+            const superstockistsTable = document.getElementById('superstockists-table');
+            superstockistsTable.innerHTML = '';
+            
+            dataModels.superstockists.forEach(superstockist => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>SST${superstockist.id.toString().padStart(3, '0')}</td>
+                    <td>${superstockist.name}</td>
+                    <td>${superstockist.contact}</td>
+                    <td>${superstockist.region}</td>
+                    <td>₹${superstockist.creditLimit.toLocaleString()}</td>
+                    <td>${superstockist.stockists}</td>
+                    <td class="stock-high">${superstockist.status}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-superstockist" data-id="${superstockist.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-superstockist" data-id="${superstockist.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                superstockistsTable.appendChild(row);
+            });
+        }
+
+        function renderInventory() {
+            const inventoryTable = document.getElementById('inventory-table');
+            inventoryTable.innerHTML = '';
+            
+            dataModels.inventory.forEach(item => {
+                const totalStock = item.superstockist + item.stockist + item.retailer;
+                const status = totalStock < item.minStock ? 'stock-low' : 
+                              totalStock < item.minStock * 2 ? 'stock-medium' : 'stock-high';
+                const statusText = totalStock < item.minStock ? 'Reorder' : 
+                                  totalStock < item.minStock * 2 ? 'Medium' : 'Good';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.superstockist}</td>
+                    <td>${item.stockist}</td>
+                    <td>${item.retailer}</td>
+                    <td>${totalStock}</td>
+                    <td>${item.minStock}</td>
+                    <td class="${status}">${statusText}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm update-stock" data-id="${item.productId}">
+                            <i class="fas fa-edit"></i> Update
+                        </button>
+                    </td>
+                `;
+                inventoryTable.appendChild(row);
+            });
+        }
+
+        function renderInvoices() {
+            // This would be populated from actual invoice data
+            // For now, we'll just show empty tables
+        }
+
+        function renderSalesData() {
+            // This would be populated from actual sales data
+        }
+
+        function renderExpenses() {
+            // Render marketing expenses
+            const marketingTable = document.getElementById('marketing-expenses-table');
+            marketingTable.innerHTML = '';
+            
+            dataModels.expenses.marketing.forEach(expense => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${expense.date}</td>
+                    <td>${expense.description}</td>
+                    <td>${expense.doctor}</td>
+                    <td>₹${expense.amount.toLocaleString()}</td>
+                    <td>${expense.category}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-expense" data-id="${expense.id}" data-type="marketing">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-expense" data-id="${expense.id}" data-type="marketing">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                marketingTable.appendChild(row);
+            });
+            
+            // Render operating expenses
+            const operatingTable = document.getElementById('operating-expenses-table');
+            operatingTable.innerHTML = '';
+            
+            dataModels.expenses.operating.forEach(expense => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${expense.date}</td>
+                    <td>${expense.description}</td>
+                    <td>${expense.category}</td>
+                    <td>₹${expense.amount.toLocaleString()}</td>
+                    <td>${expense.recurring ? 'Yes' : 'No'}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-expense" data-id="${expense.id}" data-type="operating">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-expense" data-id="${expense.id}" data-type="operating">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                operatingTable.appendChild(row);
+            });
+        }
+
+        function renderLoans() {
+            // Render bank loans
+            const bankLoansTable = document.getElementById('bank-loans-table');
+            bankLoansTable.innerHTML = '';
+            
+            dataModels.loans.bank.forEach(loan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>BL${loan.id.toString().padStart(3, '0')}</td>
+                    <td>${loan.bank}</td>
+                    <td>₹${loan.amount.toLocaleString()}</td>
+                    <td>${loan.interestRate}%</td>
+                    <td>₹${loan.emi.toLocaleString()}</td>
+                    <td>₹${loan.balance.toLocaleString()}</td>
+                    <td class="stock-high">${loan.status}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-loan" data-id="${loan.id}" data-type="bank">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-loan" data-id="${loan.id}" data-type="bank">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                bankLoansTable.appendChild(row);
+            });
+            
+            // Render personal loans
+            const personalLoansTable = document.getElementById('personal-loans-table');
+            personalLoansTable.innerHTML = '';
+            
+            dataModels.loans.personal.forEach(loan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>PL${loan.id.toString().padStart(3, '0')}</td>
+                    <td>${loan.lender}</td>
+                    <td>₹${loan.amount.toLocaleString()}</td>
+                    <td>${loan.interestRate}%</td>
+                    <td>₹${loan.monthlyInterest.toLocaleString()}</td>
+                    <td>₹${loan.balance.toLocaleString()}</td>
+                    <td class="stock-high">${loan.status}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-loan" data-id="${loan.id}" data-type="personal">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-loan" data-id="${loan.id}" data-type="personal">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                personalLoansTable.appendChild(row);
+            });
+        }
+
+        function installApp() {
+            // This would trigger the PWA installation
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
                     }
+                    deferredPrompt = null;
                 });
             }
+        }
 
-            // Initialize
-            updateUIForRole();
-        });
+        // Add more CRUD operations here for products, distributors, expenses, loans, etc.
+        // These would include functions like addProduct, editProduct, deleteProduct, etc.
     </script>
 </body>
 </html>
